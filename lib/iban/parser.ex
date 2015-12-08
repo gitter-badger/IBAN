@@ -78,5 +78,4 @@ defmodule Parser do
 	  VG: 24 }
   end
   
-  
 end
