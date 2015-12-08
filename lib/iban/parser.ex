@@ -4,7 +4,12 @@ defmodule Parser do
   """
   
   def length(country_code) do
-    Map.fetch(fact, country_code |> String.upcase |> String.to_atom)
+    case Map.fetch(fact, country_code |> String.upcase |> String.to_atom) do
+      {:ok, length} ->
+        length
+      _ ->
+        {:error}
+    end
   end
   
   def fact do

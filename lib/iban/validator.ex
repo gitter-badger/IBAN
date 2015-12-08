@@ -1,6 +1,6 @@
 defmodule Validator do
   @moduledoc """
-  Placehold for validation test
+  Placehold for validation poc
   """
   
   def validate(iban) do
@@ -8,11 +8,14 @@ defmodule Validator do
     length = Parser.length(country_code) # have fun that kills process if issue, let it die
     case length == String.length(iban) do
       true ->
-        {front, back} = String.split_at(iban, 4) # have fun that kills process if issue, let it die
-        next_phase = back <> front # be part of fun in line above
-        numberfied_string = numberfy_string(next_phase)
+        
+        iban
+        |> _rearrange
+        |> _convert_to_integer
+        |> _compute_remainder
+        
       false ->
-        {:invalid}
+        :invalid
     end
   end
   
@@ -26,15 +29,6 @@ defmodule Validator do
   def numberfy_string(text) do
     _numberfy_string(text, "")
   end
-  
-  #def numberfy_string([head|tail], new_list) do
-    # String.codepoints("GB")
-    # List.to_integer(String.to_char_list("GB"), 28)
-    
-    # Enum.map(6..10, fn(x) -> x*x end)
-    # |> Enum.map(fn(x) -> IO.inspect(x) end)
-    # @alfredbaudisch: I was thinking of solving this by 
-  #end
   
   defp _numberfy_string(string, number_string) do
     case String.length(string) do
@@ -54,6 +48,29 @@ defmodule Validator do
     letter 
     |> String.upcase
     |> number_fact
+  end
+  
+  defp _rearrange(iban) do
+    {front, back} = String.split_at(iban, 4) # have fun that kills process if issue, let it die
+    back <> front
+  end
+  
+  defp _convert_to_integer(string) do
+    numberfy_string(string)
+  end
+  
+  defp _compute_remainder(numberfied_string) do
+    reminder =
+          numberfied_string
+          |> String.to_integer
+          |> rem 97
+        
+    case reminder == 1 do
+      true -> 
+        :valid
+      false ->
+        :invalid
+    end
   end
   
   def number_fact("1"), do: 1
